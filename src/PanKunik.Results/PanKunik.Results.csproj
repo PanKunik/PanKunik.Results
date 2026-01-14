@@ -2,11 +2,12 @@
 
   <PropertyGroup>
 	  <PackageId>PanKunik.Results</PackageId>
-	  <Version>0.1.0</Version>
+	  <Version>0.1.1</Version>
 	  <Authors>Patryk Kunicki</Authors>
 	  <Description>Implementation of Result Pattern (with generic)</Description>
 	  <PackageProjectUrl>https://github.com/pankunik/PanKunik.Results</PackageProjectUrl>
-	  <PackageRepositoryUrl>https://github.com/pankunik/PanKunik.Results</PackageRepositoryUrl>
+	  <RepositoryUrl>https://github.com/pankunik/PanKunik.Results</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
 	  <PackageTags>common;results;patterns</PackageTags>
 	  <TargetFramework>net10.0</TargetFramework>
 	  <ImplicitUsings>enable</ImplicitUsings>
