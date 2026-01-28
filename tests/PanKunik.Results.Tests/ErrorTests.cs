@@ -20,7 +20,7 @@ public class ErrorTests
     
     [Theory]
     [MemberData(nameof(CreateErrorTests))]
-    public void Validation_ShouldCreateFailureError(string code, string message)
+    public void Validation_ShouldCreateValidationError(string code, string message)
     {
         // Act
         var error = Error.Validation(code, message);
@@ -34,7 +34,7 @@ public class ErrorTests
     
     [Theory]
     [MemberData(nameof(CreateErrorTests))]
-    public void NotFound_ShouldCreateFailureError(string code, string message)
+    public void NotFound_ShouldCreateNotFoundError(string code, string message)
     {
         // Act
         var error = Error.NotFound(code, message);
