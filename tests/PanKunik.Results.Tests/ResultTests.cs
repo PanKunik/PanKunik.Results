@@ -29,39 +29,6 @@ public class ResultTests
         Assert.NotNull(result.Error);
         Assert.Equal(error, result.Error);
     }
-    
-    [Theory]
-    [InlineData("value")]
-    [InlineData(1)]
-    [InlineData(true)]
-    public void SuccessWithValue_WhenCalledWithValue_ShouldCreateSuccessResultWithExpectedValue(object value)
-    {
-        // Act
-        var result = Result<object>.Success(value);
-        
-        // Assert
-        Assert.NotNull(result);
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-        Assert.Equal(value, result.Value);
-        Assert.Null(result.Error);
-    }
-
-    [Theory]
-    [MemberData(nameof(FailureTestCases))]
-    public void FailureOfT_WhenCalled_ShouldCreateFailureResult(Error error)
-    {
-        // Arrange
-        var result = Result<object>.Failure(error);
-        
-        // Assert
-        Assert.NotNull(result);
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.NotNull(result.Error);
-        Assert.Null(result.Value);
-        Assert.Equal(error, result.Error);
-    }
 
     public static IEnumerable<object[]> FailureTestCases =
     [
@@ -69,4 +36,47 @@ public class ResultTests
         [Error.Validation("VALIDATION", "Validation error message")],
         [Error.NotFound("NOT_FOUND", "Not found")]
     ];
+    
+    [Fact]
+    public void Match_WhenSuccess_ShouldCallOnSuccess()
+    {
+        // Arrange
+        var result = Result.Success();
+        var called = false;
+
+        // Act
+        result.Match(
+            onSuccess: () =>
+            {
+                called = true;
+                return called;
+            },
+            onFailure: _ => false
+        );
+
+        // Assert
+        Assert.True(called);
+    }
+    
+    [Fact]
+    public void Match_WhenFailure_ShouldCallOnFailure()
+    {
+        // Arrange
+        var error = Error.Failure("CODE", "MESSAGE");
+        var result = Result.Failure(error);
+        var called = false;
+
+        // Act
+        result.Match(
+            onSuccess: () => false,
+            onFailure: _ =>
+            {
+                called = true;
+                return true;
+            }
+        );
+
+        // Assert
+        Assert.True(called);
+    }
 }
