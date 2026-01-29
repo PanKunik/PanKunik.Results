@@ -1,53 +1,55 @@
 namespace PanKunik.Results;
 
-public sealed class Result<TIn>
-    : Result
+/// <summary>
+/// Represents the result of an operation that does not return a value.
+/// </summary>
+public class Result
 {
-    private Result(TIn value)
-        : base()
-    {
-        Value = value;
-    }
+    private protected Result() => Error = null;
+    private protected Result(Error error) => Error = error;
+    
+    /// <summary>
+    /// The error associated with a failed result. Null if success.
+    /// </summary>
+    public Error? Error { get; }
+    
+    /// <summary>
+    /// True if the result represents a successful operation.
+    /// </summary>
+    public bool IsSuccess => Error == null;
+    
+    /// <summary>
+    /// True if the result represents a failed operation.
+    /// </summary>
+    public bool IsFailure => !IsSuccess;
 
-    private Result(Error error)
-        : base(error)
-    {
-        Value = default;
-    }
+    /// <summary>
+    /// Creates a successful result.
+    /// </summary>
+    public static Result Success() => new();
+    
+    /// <summary>
+    /// Creates a failed result with the specified error.
+    /// </summary>
+    public static Result Failure(Error error) => new(error);
 
-    public TIn? Value { get; }
-
-    public static Result<TIn> Success(TIn value) => new(value);
-    public new static Result<TIn> Failure(Error error) => new(error);
-
-    public TResult Map<TResult>(
-        Func<TIn, TResult> onSuccess,
+    /// <summary>
+    /// Applies one of the two callbacks depending on whether the result is a success or failure.
+    /// </summary>
+    /// <param name="onSuccess">Callback invoked if the result is success.</param>
+    /// <param name="onFailure">Callback invoked if the result is failure.</param>
+    /// <returns>The result of the invoked callback.</returns>
+    public TResult Match<TResult>(
+        Func<TResult> onSuccess,
         Func<Error, TResult> onFailure
     )
     {
-        return IsSuccess ? onSuccess(Value!) : onFailure(Error!);
-    }
-}
-
-public class Result
-{
-    protected Result()
-    {
-        Error = null;
+        return IsSuccess
+            ? onSuccess()
+            : onFailure(Error!);
     }
 
-    protected Result(Error error)
-    {
-        Error = error;
-    }
-
-    public Error? Error { get; }
-    public bool IsSuccess => Error == null;
-    public bool IsFailure => !IsSuccess;
-
-    public static Result Success() => new();
-    public static Result Failure(Error error) => new(error);
-
+    [Obsolete("Use `Match()` instead.")]
     public TResult Map<TResult>(
         Func<TResult> onSuccess,
         Func<Error, TResult> onFailure
